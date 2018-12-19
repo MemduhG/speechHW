@@ -1,0 +1,40 @@
+
+Dear students,
+
+If you are done with training, you can continue with models testing.
+
+This is our last step (17.) of HTK tutorial - models evaluation.
+You should  show me your grammar  before you start to record wavefiles.
+
+Best Regards
+
+Nino
+
+----------------------------------------------------------------
+
+17. Test of models
+
+mkdir test; cd test
+
+Write your test grammar to file wdnet.grm and compile it into HTK format: 
+
+ HParse wdnet.grm wdnet.lat
+
+Create phonetical dictionary dict.tst from your grammar words and generate test sentences:  
+
+HSGen -n 20 wdnet.lat dict.tst > test_sentences.txt
+
+Record 20 sentences to wav files in the same way as training sentences and create analogically with help of previous scripts following files: 
+test_codestr.scp, test.scp, test_words.mlf.
+
+Start your test recognition:
+
+HVite -T 1 -C ../config1 -H ../hmm9/macros -H ../hmm9/hmmdefs -S test.scp -l '*' -i recout.mlf -w wdnet.lat -p 0.0 -s 5.0 dict.test ../monophones1 
+
+Evaluate your recognition output file recout.mlf by
+
+HResults -I test_words.mlf ../monophones1 recout.mlf
+
+.
+
+

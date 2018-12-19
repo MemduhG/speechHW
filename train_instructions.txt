@@ -1,0 +1,274 @@
+0. HTK compilation
+
+  After registration download linux stable release 3.4.1 from: http://htk.eng.cam.ac.uk/download.shtml
+  Before compilation edit  HLMTools/Makefile.in (on line 77 replace initial spaces by tabulator)
+  (if you have finally binary file execution problem or missing 32bit libraries, you can try to replace string  "-m32" by "-m64" within file "configure" )
+Then run:
+   ./configure  --prefix=`echo ~`  --disable-hslab
+   make -j 4 all
+   make install
+
+   Your HTK binaries will be saved into the directory ~/bin.
+   (if you want to test compilation by sample demo download, don't forget create there directories proto, test, hmms, hmms/hmm.0, ..., hmms/hmm.3, hmms/tmp as described in README there)
+
+1. Save transcriptions of 40 training sentences into a file, one sentence per line, in UTF8 (sententces.txt).
+
+ 2. Record 40  training sentences (name them for example S001.wav, .., S040.wav)
+    with audacity  (48kHz or 44.1kHz, 16bit, WAV) or with following script (recordIt.prl):
+
+#!/usr/bin/perl
+system "mkdir data48k";
+system "mkdir data";
+$j=1;
+$n=40;
+while($j<=$n)
+{
+ $sj = sprintf("%03d",$j);
+ system "sed -n sentences.txt -e \"$j p\"";
+ # 1 channel, 16-bit, 48000 Hz version
+ system "rec -c 1 -e signed-integer -b 16 -r 48000 data48k/S$sj_48k.wav";
+ # 1 channel, 16-bit, 16000 Hz version
+ system "sox data48k/S$sj_48k.wav -r 16000 data/S$sj.wav"  #downsampling to 16kHz
+ $j=$j+1;
+}
+
+ 
+2. Generate transcription file from sentences with following script (toMLF.prl, words.mlf).
+
+#!/usr/bin/perl
+use encoding "utf8";
+
+$j=1;
+print "#!MLF!#\n";
+while(<>)
+{
+ $sj=sprintf("%03d",$j);
+ $_ = uc;                            # uppercase conversion
+ s/[;,.?!]/ /g;                        # removes interpunctions
+ s/\s{1,}/ /g;                       # reduces spaces
+ s/^/\"*\/S$sj.lab\"\n/g;       # inserts sentence identifier
+ s/\s/\n/g;                           # new line between every word
+ print $_,".\n";                   # prints words
+
+ $j=$j+1;
+}
+
+------------------------
+ words.mlf:
+
+ cat sentences.txt | perl ./toMLF.prl  > words.mlf
+
+
+2. Generate conversion and MFC list (codestr.scp, train.scp).
+     
+     
+      ls  -1 $PWD/data/*.wav | sed "s/\(.*\).lst/\1.wav \1.mfc/" > ../codestr.scp
+      ls  -1 $PWD/data/*.wav | sed "s/\.wav/\.mfc/" > ../train.scp
+    
+
+3. Save conversion configuration file (config).
+
+SOURCEKIND = WAVEFORM 
+SOURCEFORMAT = WAV
+TARGETKIND = MFCC_0
+TARGETRATE = 100000.0
+SAVECOMPRESSED = T
+SAVEWITHCRC = T
+WINDOWSIZE = 250000.0
+USEHAMING = T
+PREEMCOEF = 0.97
+NUMCHANS = 26
+CEPLIFTER = 22
+NUMCEPS = 12
+ENORMALISE = F
+
+
+4.  Convert WAVs to MFC feature vector files.
+
+HCopy -T 1 -C config -S codestr.scp
+ 
+
+(or ~/bin/HCopy -T 1 -C config -S codestr.scp)
+
+ 
+
+5. Dictionary preparation (dict, pron.prl)
+    For some languages you can define your own transcription rules from orthographical to phonetical representation.
+    Something in the following substitution script form (pron.prl):
+
+#!/usr/bin/perl
+use encoding "utf8";
+
+while(<>)
+   { #some example rules for Spanish
+      s/\r?\n//; #removes newline characters
+      $word = $_;
+
+      s/GE/x e /g;
+      s/GI/x i /g;
+      s/GUE/g e /g;
+      s/GUI/g i /g;
+      s/G([AOU])/g \1 /g;
+      s/^G/g /g;
+
+      s/CE/s e /g;
+      s/CI/s i /g;
+      s/CH/tsh /g;
+#... on so on until to single letters rules:
+     s/A/a /g;
+     s/B/b /g;
+     s/C/k /g;
+
+     s/Z/s /g;
+    
+     s/$/ sp/g; #final short pause model
+
+     s/([^\sa-z])([^\s])/\1 \2 /g; #insert spaces behind rest of capitals
+     #$_=lc; # rest to lowercase
+
+     print "$word\t$_\n";
+   }
+
+-----------------------------
+
+Then extract word list(dict.tmp) and create dictionary file dict:
+
+  cat sentences.txt |   PERLIO=:utf8 perl -pe '$_=uc'| tr " :,.?\!" "\n\n\n\n\n" |  sort -u | sed '/^\s*$/ d'   > dict.tmp
+  cat dict.tmp | perl ./pron.prl > dict
+
+ Or you can download some online dictionaries for your language or use the online MaryTTs phonetical output (if your language is included).
+
+
+6. Phonetical list (monophones0)
+    Create monophones0 list of your monophones names (without sp, the name for short pause).
+
+7. Phonetical transcription of training files without sp model (phones0.mlf):
+
+Create script mkphones0.led
+
+Create script mkphones0.led:
+
+EX
+IS sil sil
+DE sp
+
+
+and generate phonetical transcription by command:
+
+HLEd -l '*' -d dict -i phones0.mlf mkphones0.led  words.mlf
+
+
+8. Create prototypical HMM file (proto).
+
+~o <VecSize> 39 <MFCC_0_D_A> 
+~h "proto"
+<BeginHMM>
+ <NumStates> 5
+ <State> 2
+  <Mean> 39
+   0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+  <Variance> 39
+   1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0
+ <State> 3
+  <Mean> 39
+   0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+  <Variance> 39
+   1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0
+ <State> 4
+  <Mean> 39
+   0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+  <Variance> 39
+   1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0
+ <TransP> 5
+  0.0 1.0 0.0 0.0 0.0
+  0.0 0.6 0.4 0.0 0.0
+  0.0 0.0 0.6 0.4 0.0
+  0.0 0.0 0.0 0.7 0.3
+  0.0 0.0 0.0 0.0 0.0
+<EndHMM>
+
+9. Prepare new config1 file for MFC files:
+
+TARGETKIND = MFCC_0_D_A
+TARGETRATE = 100000.0
+SAVECOMPRESSED = T
+SAVEWITHCRC = T
+WINDOWSIZE = 250000.0
+USEHAMING = T
+PREEMCOEF = 0.97
+NUMCHANS = 26
+CEPLIFTER = 22
+NUMCEPS = 12
+ENORMALISE = F
+
+ 
+10. Initialize proto model
+
+mkdir hmm0; HCompV -T 1 -C config1 -f 0.01 -m -S train.scp -M hmm0 proto
+
+11. Clone initialized proto model for all phones from monophones0 list (./hmm0/macros, ./hmm0/hmmdesf).
+
+#!/bin/sh
+echo "" >./hmm0/hmmdefs #
+head -n 3 ./hmm0/proto > ./hmm0/macros
+cat ./hmm0/vFloors >> ./hmm0/macros
+for w  in `cat ./monophones0`
+do
+ cat ./hmm0/proto | sed "s/proto/$w/g"|sed "1 d"|sed "1 d"|sed "1 d" >> ./hmm0/hmmdefs
+done
+
+
+12. First three training cycles (Baum-Welch training)
+
+ 
+mkdir hmm1; HERest -T 1 -C config1 -I phones0.mlf -t 250.0 150.0 1000.0 -S train.scp -H hmm0/macros -H hmm0/hmmdefs -M hmm1 monophones0
+ 
+mkdir hmm2; HERest -T 1 -C config1 -I phones0.mlf -t 250.0 150.0 1000.0 -S train.scp -H hmm1/macros -H hmm1/hmmdefs -M hmm2 monophones0
+
+mkdir hmm3; HERest -T 1 -C config1 -I phones0.mlf -t 250.0 150.0 1000.0 -S train.scp -H hmm2/macros -H hmm2/hmmdefs -M hmm3 monophones0
+
+12. Silence model modification
+
+cp -r hmm3 hmm4
+
+In hmm4/hmmedefs create manualy one-state sp model with parameters of middle state of sil model.
+Than copy monophones0 to monophones1 and append to it sp label.
+Create sil.hed script:
+
+AT 2 4 0.2 {sil.transP}
+AT 4 2 0.2 {sil.transP}
+AT 1 3 0.3 {sp.transP}
+TI silst {sil.state[3],sp.state[2]}
+
+ 
+and run 
+
+mkdir hmm5; HHEd -H hmm4/macros -H hmm4/hmmdefs -M hmm5 sil.hed monophones1
+
+
+13. Generate new phonetic transcription with sp between words(phones1.mlf) following step 7, but without "DE sp" command in script.
+
+14. Next training cycles:
+
+mkdir hmm6; HERest -T 1 -C config1 -I phones1.mlf -t 250.0 150.0 1000.0 -S train.scp -H hmm5/macros -H hmm5/hmmdefs -M hmm6 monophones1;
+mkdir hmm7; HERest -T 1 -C config1 -I phones1.mlf -t 250.0 150.0 1000.0 -S train.scp -H hmm6/macros -H hmm6/hmmdefs -M hmm7 monophones1;
+
+15. Control of training data transcription
+
+Extend dict by word for silence: 
+
+silence sil
+
+and run forced-alignment script:
+
+HVite -T 1 -l '*' -o SWT -b silence -C config1 -a -H hmm7/macros -H hmm7/hmmdefs -i aligned.mlf -m -t 250.0 -I words.mlf -S train.scp -y lab dict monophones1
+
+In file aligned.mlf will be only sentences with good transcription.
+
+
+16. Last two training cycles:
+
+mkdir hmm8; HERest -T 1 -C config1 -I aligned.mlf -t 250.0 150.0 1000.0 -S train.scp -H hmm7/macros -H hmm7/hmmdefs -M hmm8 monophones1;
+mkdir hmm9; HERest -T 1 -C config1 -I aligned.mlf -t 250.0 150.0 1000.0 -S train.scp -H hmm8/macros -H hmm8/hmmdefs -M hmm9 monophones1;
+
+ 
