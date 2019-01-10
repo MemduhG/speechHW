@@ -1,0 +1,61 @@
+#!/usr/bin/perl
+use utf8;
+
+while(<>)
+   { #some example rules for Spanish
+      s/\r?\n//; #removes newline characters
+      $word = $_;
+	  #special characters
+	  s/ç/ch /g;
+      s/ğ/gh /g;
+	  s/ı/schwa /g;
+	  s/ö/ie /g;
+	  s/ü/ue /g;
+	  s/ş/sh /g;
+	  s/î/i /g;
+	  s/û/u /g;
+	  s/â/a /g;
+	  s/Ç/ch /g;
+      s/Ğ/gh /g;
+	  s/I/schwa /g;
+	  s/Ö/ie /g;
+	  s/Ü/ue /g;
+	  s/Ş/sh /g;
+	  s/Î/i /g;
+	  s/Û/u /g;
+	  s/Â/a /g;
+
+	  #ordinary caps
+     s/A/a /g;
+     s/B/b /g;
+     s/C/c /g;
+     s/D/d /g;
+     s/E/e /g;
+     s/F/f /g;
+     s/G/g /g;
+     s/H/h /g;
+     s/J/j /g;
+     s/J/j /g;
+     s/K/k /g;
+     s/L/l /g;
+     s/M/m /g;
+     s/N/n /g;
+     s/O/o /g;
+     s/P/p /g;
+     s/R/r /g;
+     s/S/s /g;
+     s/T/t /g;
+     s/U/u /g;
+     s/V/v /g;
+     s/Y/y /g;
+     s/Z/z /g;
+
+
+     s/$/ sp/g; #final short pause model
+
+     s/([^\sa-z])([^\s])/\1 \2 /g; #insert spaces behind rest of capitals
+     #$_=lc; # rest to lowercase
+
+     print "$word\t$_\n";
+   }
+
