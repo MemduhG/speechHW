@@ -9,7 +9,7 @@ while(<>)
 	  s/ç/ch /g;
       s/ğ/gh /g;
 	  s/ı/schwa /g;
-	  s/ö/ie /g;
+	  s/ö/oe /g;
 	  s/ü/ue /g;
 	  s/ş/sh /g;
 	  s/î/i /g;
@@ -18,7 +18,7 @@ while(<>)
 	  s/Ç/ch /g;
       s/Ğ/gh /g;
 	  s/I/schwa /g;
-	  s/Ö/ie /g;
+	  s/Ö/oe /g;
 	  s/Ü/ue /g;
 	  s/Ş/sh /g;
 	  s/Î/i /g;
