@@ -1,7 +1,7 @@
 Yıldız, ağırlıklı olarak hidrojen ve helyumdan oluşan, yoğun ve karanlık uzayda ışık saçan gökyüzünde bir nokta olarak görünen plazma küresi. 
 Bir araya toplanan yıldızların oluşturduğu gökadalar gözlemlenebilir evrenin hâkimidir. 
-Dünya'dan çıplak gözle görülebilen yaklaşık altı bin dolayında yıldız vardır ve Dünya'ya en yakın yıldız, aynı zamanda Dünya üzerindeki yaşamın kaynağı da olan Güneş'tir.
-Gün ışığı dâhil olmak üzere Dünya üzerindeki enerjinin çoğunun kaynağı Güneş'tir. 
+Dünyadan çıplak gözle görülebilen yaklaşık altı bin dolayında yıldız vardır ve Dünyaya en yakın yıldız, aynı zamanda Dünya üzerindeki yaşamın kaynağı da olan Güneştir.
+Gün ışığı dâhil olmak üzere Dünya üzerindeki enerjinin çoğunun kaynağı Güneştir. 
 Diğer yıldızlar, yeryüzünden bakıldığında Güneş’in ışığı altında kalmadıkları zaman yani geceleri gökyüzünde görünürler. 
 Yıldızların parlamasının nedeni çekirdeklerinde meydana gelen çekirdek kaynaşması (füzyon) tepkimelerinde açığa çıkan nükleer enerjinin yıldızın içinden geçtikten sonra dış uzaya ışınım (radyasyon) ile yayılmasıdır.
 Gökbilimciler bir yıldızın tayfını, parlaklığını ve uzaydaki hareketini gözlemleyerek o yıldızın kütlesi, yaşı, kimyasal bileşimi ve bunun gibi birçok özelliğini belirleyebilirler. 
@@ -11,7 +11,7 @@ Yıldız gelişiminin ilk halkası, hidrojen, bir miktar helyum ve çok az mikta
 Yıldız çekirdeği yeteri kadar yoğunlaştıktan sonra içinde bulunan hidrojenin bir kısmı sürekli olarak çekirdek kaynaşması tepkimesiyle helyuma çevrilir. 
 Yıldızın geri kalan kısmı, açığa çıkan erkeyi, ışınım ve ısıyayım (konveksiyon) birleşimiyle çekirdekten uzağa taşır. 
 Bu süreçler yıldızın kendi içine doğru çökmesini engeller ve erke, yıldız yüzeyinde bir yıldız rüzgârı yaratarak dış uzaya doğru ışınım yoluyla yayılır.
-Çekirdekteki hidrojen yakıtı bittikten sonra, en azından Güneş'in kütlesinin beşte ikisi kadar bir kütleye sahip olan yıldız genişleyerek, daha ağır olan öğeler çekirdekte ya da çekirdeğin etrafında kabuk hâlinde kaynaşarak kırmızı dev hâline gelir. 
+Çekirdekteki hidrojen yakıtı bittikten sonra, en azından Güneşin kütlesinin beşte ikisi kadar bir kütleye sahip olan yıldız genişleyerek, daha ağır olan öğeler çekirdekte ya da çekirdeğin etrafında kabuk hâlinde kaynaşarak kırmızı dev hâline gelir. 
 Daha sonra maddenin bir kısmı yıldızlararası ortama salınarak, ağır öğelerin daha yoğun olacağı yeni bir yıldız nesli yaratacak şekle dönüşür.
 İki ya da daha fazla yıldızdan oluşan sistemlerde birbirine kütleçekim gücüyle bağlanmış ve genellikle birbirinin çevresinde düzenli yörüngelerde dönen yıldızlar bulunur. 
 Birbirine çok yakın bir yörünge izleyen yıldızların kütleçekimgücü ile etkileşimlerinin evrimsel gelişimlerinde önemli etkisi vardır.
