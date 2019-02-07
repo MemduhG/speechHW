@@ -6,7 +6,7 @@ print "#!MLF!#\n";
 while(<>)
 {
  $sj=sprintf("%03d",$j);
- $_ = lc;                            # uppercase conversion
+ $_ = uc;                            # uppercase conversion
  s/[)(;,.?!]/ /g;                        # removes interpunctions
  s/\s{1,}/ /g;                       # reduces spaces
  s/^/\"*\/S$sj.lab\"\n/g;       # inserts sentence identifier
