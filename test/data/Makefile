@@ -14,6 +14,6 @@ test_words.mlf: test_sentences.txt
 results.txt:
 	HCopy -T 1 -C ../../config -S test_codestr.scp
 	HVite -T 1 -C $(base)/config1 -H $(base)/hmm9/macros -H $(base)/hmm9/hmmdefs -S test.scp -l '*' -i recout.mlf -w ../wdnet.lat -p 0.0 -s 5.0 ../test.dict $(base)/monophones1 > recout.mlf
-	HResults -I test_words.mlf ../../monophones1 recout.mlf
+	HResults -t -I test_words.mlf ../../monophones1 recout.mlf
 
 
